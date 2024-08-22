@@ -39,7 +39,7 @@
 #define configTICK_RATE_HZ	                    ( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES					( 8 )
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 200 )
-#define configTOTAL_HEAP_SIZE					( 124 * 1024 )
+#define configTOTAL_HEAP_SIZE					( 124 * 1024 )                          // !! sets the array size in bytes
 
 /* TickType_t bit size configuration*/
 /*
@@ -64,7 +64,8 @@
 * Else include a heap memory allocation scheme in your project, either 
 * one of the heap_n.c files, or one provided by yourself
 */
-#define configSUPPORT_DYNAMIC_ALLOCATION        0   
+// #define configSUPPORT_DYNAMIC_ALLOCATION        0   
+// #define configSUPPORT_STATIC_ALLOCATION         1       //!! static memory allocation 
 
 
 /* Software timer definitions. */
