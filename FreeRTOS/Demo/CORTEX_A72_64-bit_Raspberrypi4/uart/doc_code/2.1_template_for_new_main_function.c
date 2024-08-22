@@ -1,3 +1,9 @@
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "timers.h"
+#include "semphr.h"
+
 int main( void )
 {
     /* Perform any hardware setup necessary. */
@@ -7,7 +13,7 @@ int main( void )
 
     /* Start the created tasks running. */
     vTaskStartScheduler();
-    
+
     /* Execution will only reach here if there was insufficient heap to
     start the scheduler. */
     for( ;; );

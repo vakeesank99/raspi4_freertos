@@ -25,20 +25,47 @@
  * 1 tab == 4 spaces!
  */
 
+
+/*
+* Here are some comments created for my inderstanding from the book
+* it will start with !! 
+*/
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#define configUSE_PREEMPTION					1
+#define configUSE_PREEMPTION					1                                       // !! defines whether FreeRTOS uses cooperative or pre-emptive scheduling
 #define configUSE_IDLE_HOOK						1
 #define configUSE_TICK_HOOK						1
 #define configTICK_RATE_HZ	                    ( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES					( 8 )
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 200 )
 #define configTOTAL_HEAP_SIZE					( 124 * 1024 )
-#define configUSE_16_BIT_TICKS					0
+
+/* TickType_t bit size configuration*/
+/*
+* TickType_t can be an unsigned 16-bit type, an unsigned 32-bit type, or an unsigned 64-bit type
+* The setting of configTICK_TYPE_WIDTH_IN_BITS is architecture dependent. FreeRTOS ports will also
+* check if this setting is valid. Using a 16-bit type can greatly improve efficiency on 8-bit and 16-bit architectures, 
+* but severely limits the maximum block time that can be specified in FreeRTOS API calls. 
+* There is no reason to use a 16-bit TickType_t type on a 32-bit or 64-bit architecture.
+* Previous use of configUSE_16_BIT_TICKS has been replaced by configTICK_TYPE_WIDTH_IN_BITS
+*/
+#define configUSE_16_BIT_TICKS					0 
+// #define configTICK_TYPE_WIDTH_IN_BITS           TICK_TYPE_WIDTH_64_BITS
+
+
 #define configIDLE_SHOULD_YIELD					1
 
 #define configUSE_MUTEXES						1
+
+/* ---------Heap memory allocation scheme------------------*/
+/*
+* 0 then do not include a heap memory allocation scheme in your project.
+* Else include a heap memory allocation scheme in your project, either 
+* one of the heap_n.c files, or one provided by yourself
+*/
+#define configSUPPORT_DYNAMIC_ALLOCATION        0   
+
 
 /* Software timer definitions. */
 #define configUSE_TIMERS						1
