@@ -36,7 +36,16 @@
 #define configUSE_PREEMPTION					1                                       // !! defines whether FreeRTOS uses cooperative or pre-emptive scheduling
 #define configUSE_IDLE_HOOK						1
 #define configUSE_TICK_HOOK						1
+
+/*tick rate
+compile-time configuration constant sets
+the frequency of the tick interrupt, and so also the length of each time slice. For example, setting
+configTICK_RATE_HZ to 100 (Hz) results in each time slice lasting 10 milliseconds.
+typical value is 100
+pdMS_TO_TICKS() cannot be used, if onfigTICK_RATE_HZ is greater than 1000
+*/
 #define configTICK_RATE_HZ	                    ( ( TickType_t ) 1000 )
+
 /*
 *    minimize configMAX_PRIORITIES because
 *    more values require more RAM and will 
@@ -57,7 +66,7 @@
 * Previous use of configUSE_16_BIT_TICKS has been replaced by configTICK_TYPE_WIDTH_IN_BITS
 */
 #define configUSE_16_BIT_TICKS					0 
-// #define configTICK_TYPE_WIDTH_IN_BITS           TICK_TYPE_WIDTH_64_BITS
+// #define configTICK_TYPE_WIDTH_IN_BITS        32   // only if 64 = TICK_TYPE_WIDTH_64_BITS
 
 
 #define configIDLE_SHOULD_YIELD					1
