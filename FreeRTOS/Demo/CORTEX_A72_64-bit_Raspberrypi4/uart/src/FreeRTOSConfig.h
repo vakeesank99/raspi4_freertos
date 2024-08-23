@@ -37,7 +37,13 @@
 #define configUSE_IDLE_HOOK						1
 #define configUSE_TICK_HOOK						1
 #define configTICK_RATE_HZ	                    ( ( TickType_t ) 1000 )
+/*
+*    minimize configMAX_PRIORITIES because
+*    more values require more RAM and will 
+*    result in a longer worst-case execution time.
+*/
 #define configMAX_PRIORITIES					( 8 )                                   // !! 0 is the lowest priority and (configMAX_PRIORITIES – 1) is the highest priority
+
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 200 )
 #define configTOTAL_HEAP_SIZE					( 124 * 1024 )                          // !! sets the array size in bytes
 
@@ -74,7 +80,8 @@
 * the NULL terminator. Supplying a longer string results in 
 * the string being truncated.
 */
-// #define configMAX_TASK_NAME_LEN                 
+// #define configMAX_TASK_NAME_LEN   
+
 /*
 allows the application writer to specify the data type used to
 hold stack sizes. 
@@ -82,6 +89,14 @@ defaults to uint16_t if left undefined,
 alternatives are : unsigned long or size_t
 */
 // #define configSTACK_DEPTH_TYPE                  uint16_t
+
+/*architecture optimized
+* Architecture optimized implementations are written in architecture-specific assembly code and are more
+performant than the generic c implementation, and the worst-case execution time is the same for all
+configMAX_PRIORITIES values. 
+Not all FreeRTOS ports have an architecture optimized implementation
+*/
+// #define configUSE_PORT_optimized_TASK_SELECTION 1
 
 /* Software timer definitions. */
 #define configUSE_TIMERS						1
