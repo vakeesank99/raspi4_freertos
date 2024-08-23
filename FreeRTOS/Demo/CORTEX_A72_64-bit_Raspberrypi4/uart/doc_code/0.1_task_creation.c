@@ -32,6 +32,9 @@ void vTask1( void * pvParameters )
 {
         /* ulCount is declared volatile to ensure it is not optimized out. */
     volatile unsigned long ulCount;
+
+        // !! it is possible to create the task from here as well
+    // xTaskCreate( vTask2, "Task 2", 1000, NULL, 1, NULL );
     for( ;; )
     {
         /* Print out the name of the current task task. */
@@ -69,6 +72,38 @@ void vTask2( void * pvParameters )
     }
 }
 /*-----------------------------------------------------------*/
+void vTaskFunction(void * pvParameters)
+{
+    char *pcTaskName;
+    volatile unsigned long ul;    /* volatile to ensure ul is not optimized away. */
+    /*
+    * The string to print out is passed in via the parameter. Cast this to a
+    * character pointer.
+    */
+    pcTaskName = (char *)pvParameters;
+
+    /* As per most tasks, this task is implemented in an infinite loop. */
+    for(;;)
+    {
+        /*print out the name of the task*/
+        uart_puts(pcTaskName);
+        /*delay for a period*/
+        for(ul =0; ul< mainDELAY_LOOP_COUNT; u++)
+        {
+            // just a delay
+        }
+
+    }
+
+
+}
+
+/*-----------------------------------------------------------*/
+
+// here are some definition
+static const char * pcTextForTask1 = "Task 1 is running";
+static const char * pcTextForTask2 = "Task 2 is running";
+
 
 void main(void)
 {
@@ -80,15 +115,20 @@ void main(void)
     uart_puts("\r\n  (This sample uses UART2)\r\n");
     uart_puts("\r\n****************************\r\n");
 
-    xTaskCreate(    vTask1,     /* Pointer to the function that implements the task.*/
+    xTaskCreate(    vTaskFunction,     /* Pointer to the function that implements the task.*/
                     "Task 1",   /* Text name for the task. */
                     1000,       /* Stack depth in words. */
-                    NULL,       /* This example does not use the task parameter. */
+                    (void *)pcTextForTask1,       /* This example does not use the task parameter. */
                     1,          /* This task will run at priority 1. */
                     NULL );     /* This example does not use the task handle. */
 
     /* Create the other task in exactly the same way and at the same priority.*/
-    xTaskCreate( vTask2, "Task 2", 1000, NULL, 1, NULL );
+    xTaskCreate( vTaskFunction,
+                 "Task 2", 
+                 1000, 
+                 (void *)pcTextForTask1, 
+                 1, 
+                 NULL );
 
     vTaskStartScheduler();
 }
