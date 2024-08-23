@@ -37,7 +37,7 @@
 #define configUSE_IDLE_HOOK						1
 #define configUSE_TICK_HOOK						1
 #define configTICK_RATE_HZ	                    ( ( TickType_t ) 1000 )
-#define configMAX_PRIORITIES					( 8 )
+#define configMAX_PRIORITIES					( 8 )                                   // !! 0 is the lowest priority and (configMAX_PRIORITIES – 1) is the highest priority
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 200 )
 #define configTOTAL_HEAP_SIZE					( 124 * 1024 )                          // !! sets the array size in bytes
 
@@ -67,6 +67,21 @@
 // #define configSUPPORT_DYNAMIC_ALLOCATION        0   
 // #define configSUPPORT_STATIC_ALLOCATION         1       //!! static memory allocation 
 
+
+/*---------------Task creation parameters------------------------------------*/
+/*
+** defines the maximum length a task name can be, including 
+* the NULL terminator. Supplying a longer string results in 
+* the string being truncated.
+*/
+// #define configMAX_TASK_NAME_LEN                 
+/*
+allows the application writer to specify the data type used to
+hold stack sizes. 
+defaults to uint16_t if left undefined,
+alternatives are : unsigned long or size_t
+*/
+// #define configSTACK_DEPTH_TYPE                  uint16_t
 
 /* Software timer definitions. */
 #define configUSE_TIMERS						1

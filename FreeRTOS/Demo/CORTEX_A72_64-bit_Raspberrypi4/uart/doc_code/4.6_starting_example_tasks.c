@@ -1,33 +1,3 @@
-#include <stddef.h>
-#include <stdint.h>
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "timers.h"
-#include "semphr.h"
-
-#include "uart.h"
-
-/* 
- * Prototypes for the standard FreeRTOS callback/hook functions implemented
- * within this file.
- */
-
- // define vaiables
- unsigned long const mainDELAY_LOOP_COUNT = 20000000;
-
-
- // define functions
-void vApplicationMallocFailedHook( void );
-void vApplicationIdleHook( void );
-
-static inline void io_halt(void)
-{
-    asm volatile ("wfi");
-    return;
-}
-/*-----------------------------------------------------------*/
 void vTask1( void * pvParameters )
 {
         /* ulCount is declared volatile to ensure it is not optimized out. */
@@ -35,7 +5,7 @@ void vTask1( void * pvParameters )
     for( ;; )
     {
         /* Print out the name of the current task task. */
-        uart_puts("\r\n  Task 1 is running \r\n " );
+        vPrintLine( "Task 1 is running" );
         /* Delay for a period. */
         for( ulCount = 0; ulCount < mainDELAY_LOOP_COUNT; ulCount++ )
             {
@@ -47,7 +17,7 @@ void vTask1( void * pvParameters )
             }
     }
 }
-/*-----------------------------------------------------------*/
+
 void vTask2( void * pvParameters )
 {
     /* ulCount is declared volatile to ensure it is not optimized out. */
@@ -56,7 +26,7 @@ void vTask2( void * pvParameters )
     for( ;; )
     {
         /* Print out the name of this task. */
-        uart_puts("\r\n  Task 2 is running  \r\n " );
+        vPrintLine( "Task 2 is running" );
         /* Delay for a period. */
         for( ulCount = 0; ulCount < mainDELAY_LOOP_COUNT; ulCount++ )
         {
@@ -68,18 +38,19 @@ void vTask2( void * pvParameters )
         }
     }
 }
-/*-----------------------------------------------------------*/
 
-void main(void)
+int main( void )
 {
-    TaskHandle_t task_a;
-
-    uart_init();
-    uart_puts("\r\n****************************\r\n");
-    uart_puts("\r\n    FreeRTOS UART Sample\r\n");
-    uart_puts("\r\n  (This sample uses UART2)\r\n");
-    uart_puts("\r\n****************************\r\n");
-
+    /*
+    * Variables declared here may no longer exist after starting the FreeRTOS
+    * scheduler. Do not attempt to access variables declared on the stack used
+    * by main() from tasks.
+    */
+    /*
+    * Create one of the two tasks. Note that a real application should check
+    * the return value of the xTaskCreate() call to ensure the task was
+    * created successfully.
+    */
     xTaskCreate(    vTask1,     /* Pointer to the function that implements the task.*/
                     "Task 1",   /* Text name for the task. */
                     1000,       /* Stack depth in words. */
@@ -89,20 +60,15 @@ void main(void)
 
     /* Create the other task in exactly the same way and at the same priority.*/
     xTaskCreate( vTask2, "Task 2", 1000, NULL, 1, NULL );
-
+    
+    /* Start the scheduler so the tasks start executing. */
     vTaskStartScheduler();
-}
-
-
-
-/*-----------------------------------------------------------*/
-
-void vApplicationIdleHook( void )
-{
-}
-
-/*-----------------------------------------------------------*/
-
-void vApplicationTickHook( void )
-{
+    /*
+    * If all is well main() will not reach here because the scheduler will now
+    * be running the created tasks. If main() does reach here then there was
+    * not enough heap memory to create either the idle or timer tasks
+    * (described later in this book). Chapter 3 provides more information on
+    * heap memory management.
+    */
+    for( ;; );
 }
