@@ -115,7 +115,34 @@ Not all FreeRTOS ports have an architecture optimized implementation
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
+
+/*
+Note that the vTaskDelay() API function is available
+ only when INCLUDE_vTaskDelay is set to 1
+ */
 #define INCLUDE_vTaskDelay						1
+
+/*
+vTaskPrioritySet() API function is only available 
+when INCLUDE_vTaskPrioritySet is set to 1
+*/
+#define INCLUDE_vTaskPrioritySet                1
+
+/*
+uxTaskPriorityGet() API function is
+only available when INCLUDE_uxTaskPriorityGet is set to 1
+*/
+
+/*
+vTaskDelete() API function is only available when
+INCLUDE_vTaskDelete is set to 1
+It is not good practice to continuously create and delete tasks at run time, 
+so consider other design options, such as re-using tasks, 
+if you find yourself needing this function
+*/
+#define INCLUDE_vTaskDelete                     1
+
+#define INCLUDE_uxTaskPriorityGet               1
 
 #define INCLUDE_xSemaphoreGetMutexHolder		1
 
