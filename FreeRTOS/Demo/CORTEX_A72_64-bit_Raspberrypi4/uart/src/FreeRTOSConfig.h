@@ -27,7 +27,7 @@
 
 
 /*
-* Here are some comments created for my inderstanding from the book
+* Here are some comments created for my understanding from the book
 * it will start with !! 
 */
 #ifndef FREERTOS_CONFIG_H
@@ -72,9 +72,17 @@ pdMS_TO_TICKS() cannot be used, if onfigTICK_RATE_HZ is greater than 1000
 #define configUSE_16_BIT_TICKS					0 
 // #define configTICK_TYPE_WIDTH_IN_BITS        32   // only if 64 = TICK_TYPE_WIDTH_64_BITS
 
+/*
+--------------how the Idle task is scheduled------------------- 
+    0 then the Idle task remains in the Running state for the entirety of
+    its time slice, unless it is preempted by a higher priority task.
 
+    1 then the Idle task yields (voluntarily gives up whatever remains of
+    its allocated time slice) on each iteration of its loop if there are other 
+    Idle priority tasks in the Ready state.
+*/
 #define configIDLE_SHOULD_YIELD					1
-
+//---------------------------------------------------------------
 #define configUSE_MUTEXES						1
 
 /* ---------Heap memory allocation scheme------------------*/
@@ -85,7 +93,7 @@ pdMS_TO_TICKS() cannot be used, if onfigTICK_RATE_HZ is greater than 1000
 */
 // #define configSUPPORT_DYNAMIC_ALLOCATION        0   
 // #define configSUPPORT_STATIC_ALLOCATION         1       //!! static memory allocation 
-
+//---------------------------------------------------------------
 
 /*---------------Task creation parameters------------------------------------*/
 /*
