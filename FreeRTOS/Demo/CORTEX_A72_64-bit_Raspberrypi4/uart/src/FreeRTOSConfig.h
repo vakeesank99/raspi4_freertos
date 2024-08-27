@@ -33,7 +33,11 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
+/*--------------------Selecting the Scheduling Algorithm----------------*/
 #define configUSE_PREEMPTION					1                                       // !! defines whether FreeRTOS uses cooperative or pre-emptive scheduling
+// #define configUSE_TIME_SLICING                  1
+// #define configUSE_TICKLESS_IDLE                 1                                    // tick interrupt being turned off completely for extended periods
+                                                                                        // specifically for use in applications that must minimize their power consumption
 #define configUSE_IDLE_HOOK						1
 #define configUSE_TICK_HOOK						1
 
@@ -145,6 +149,33 @@ if you find yourself needing this function
 #define INCLUDE_uxTaskPriorityGet               1
 
 #define INCLUDE_xSemaphoreGetMutexHolder		1
+
+/*-----------C Runtime Thread Local Storage------------------------------*/
+/*
+newlib and picolibc. These pre-built C Runtime Thread Local Storage 
+implementations can be enabled by by defining the respective macro
+*/
+#define configUSE_NEWLIB_REENTRANT              1           //newlib
+#define configUSE_PICOLIBC_TLS                  1           //picolib
+
+/*-----------Custom C Runtime Thread Local Storage---------------------*/
+#define configUSE_C_RUNTIME_TLS_SUPPORT         1   //enable C Runtime Thread Local Storage support
+#define configTLS_BLOCK_TYPE                        //the c type which should be used for storing C Runtime Thread Local Storage data
+#define configINIT_TLS_BLOCK                        //the c code which should be run when initializing the C Runtime Thread Local Storage block.   
+#define configSET_TLS_BLOCK                         //c code which should be run when switching in a new task
+#define configDEINIT_TLS_BLOCK                      //c code which should be run when de-initializing the C Runtime Thread Local Storage block
+
+/*-------------Application Thread Local Storage------------------------*/
+/*
+In addition to C Runtime Thread Local Storage, application developers 
+may also define a set of application specific pointers to be included 
+in the task control block
+*/
+#define configNUM_THREAD_LOCAL_STORAGE_POINTERS         8  // non zero number to enable
+
+
+
+
 
 void vConfigureTickInterrupt( void );
 #define configSETUP_TICK_INTERRUPT() vConfigureTickInterrupt()
