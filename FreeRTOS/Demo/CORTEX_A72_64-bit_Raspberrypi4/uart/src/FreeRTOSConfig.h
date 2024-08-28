@@ -83,7 +83,7 @@ pdMS_TO_TICKS() cannot be used, if onfigTICK_RATE_HZ is greater than 1000
 */
 #define configIDLE_SHOULD_YIELD					1
 //---------------------------------------------------------------
-#define configUSE_MUTEXES						1
+#define configUSE_MUTEXES						1                   // enable mutex
 
 /* ---------Heap memory allocation scheme------------------*/
 /*
