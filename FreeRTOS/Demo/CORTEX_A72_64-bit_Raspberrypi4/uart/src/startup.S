@@ -2,7 +2,7 @@
  
 // Make _start global.
 .globl _boot
- 
+
 _boot:
     // This program focuses on only core #3.
     // The other cores will return.

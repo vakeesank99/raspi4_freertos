@@ -98,4 +98,3 @@ build/%.o : ../../../Source/portable/GCC/ARM_CA72_64_BIT/%.S
 build/%.o : ../../../Source/portable/MemMang/%.c
 	$(CROSS)gcc $(CFLAGS)  -c -o $@ $<
 
-

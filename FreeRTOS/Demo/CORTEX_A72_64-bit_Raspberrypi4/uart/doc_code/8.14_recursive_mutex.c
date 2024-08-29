@@ -12,7 +12,7 @@ void vTaskFunction( void *pvParameters )
 
     configASSERT( xRecursiveMutex );
     /* As per most tasks, this task is implemented as an infinite loop. */
-    
+
     for( ;; )
     {
         /* ... */
@@ -49,6 +49,38 @@ void vTaskFunction( void *pvParameters )
             /* Now one call to xSemaphoreGiveRecursive() has been executed for
             every proceeding call to xSemaphoreTakeRecursive(), so the task
             is no longer the mutex holder. */
+        }
+    }
+}
+
+/*-------------------------------------------------------------------------------------*/
+/*taskYIELD() is called if the tick count changed
+while the task held the mutex.*/
+void vFunction( void *pvParameter )
+    {
+    extern SemaphoreHandle_t xMutex;
+    char cTextBuffer[ 128 ];
+    TickType_t xTimeAtWhichMutexWasTaken;
+    for( ;; )
+    {
+        /* Generate the text string – this is a fast operation. */
+        vGenerateTextInALocalBuffer( cTextBuffer );
+        /* Obtain the mutex that is protecting access to the display. */
+        xSemaphoreTake( xMutex, portMAX_DELAY );
+        /* Record the time at which the mutex was taken. */
+        xTimeAtWhichMutexWasTaken = xTaskGetTickCount();
+        /* Write the generated text to the display–this is a slow operation. */
+        vCopyTextToFrameBuffer( cTextBuffer );
+        /* The text has been written to the display, so return the mutex. */
+        xSemaphoreGive( xMutex );
+        /* If taskYIELD() was called on each iteration then this task would
+        only ever remain in the Running state for a short period of time,
+        and processing time would be wasted by rapidly switching between
+        tasks. Therefore, only call taskYIELD() if the tick count changed
+        while the mutex was held. */
+        if( xTaskGetTickCount() != xTimeAtWhichMutexWasTaken )
+        {
+            taskYIELD();
         }
     }
 }

@@ -1,48 +1,7 @@
-
-
-#include <stddef.h>
-#include <stdint.h>
-// #include <stdlib.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "timers.h"
-#include "semphr.h"
-
-#include "uart.h"
-
-/* 
- * Prototypes for the standard FreeRTOS callback/hook functions implemented
- * within this file.
- */
-
- // define vaiables
- unsigned long const mainDELAY_LOOP_COUNT = 20000000;
-/* Define the strings that the tasks and interrupt will print out via the
-gatekeeper. */
-static char *pcStringsToPrint[] =
-{
-"Task 1 ****************************************************\r\n",
-"Task 2 ----------------------------------------------------\r\n",
-"Message printed from the tick hook interrupt ##############\r\n"
-};
-/*-----------------------------------------------------------*/
-/* Declare a variable of type QueueHandle_t. The queue is used to send messages
-from the print tasks and the tick interrupt to the gatekeeper task. */
-QueueHandle_t xPrintQueue;
-
- // define functions
-void vApplicationMallocFailedHook( void );
-void vApplicationIdleHook( void );
-
-static inline void io_halt(void)
-{
-    asm volatile ("wfi");
-    return;
-}
-/*-----------------------------------------------------------*/
-
-/*-----------------------------------------------------------*/
+/*The gatekeeper task is assigned a lower priority than the print tasks—so messages sent to the gatekeeper remain
+in the queue until both print tasks are in the Blocked state. In some situations, it would be appropriate to assign
+the gatekeeper a higher priority, so messages get processed immediately—but doing so would be at the cost of
+the gatekeeper delaying lower priority tasks until it has completed accessing the protected resource.*/
 static void prvStdioGatekeeperTask( void *pvParameters )
 {
     char *pcMessageToPrint;
@@ -61,14 +20,13 @@ static void prvStdioGatekeeperTask( void *pvParameters )
         xQueueReceive( xPrintQueue, &pcMessageToPrint, portMAX_DELAY );
 
         /* Output the received string. */
-        uart_puts("\r\n");
-        uart_puts(pcMessageToPrint);
-        uart_puts("\r\n");
+        printf( "%s", pcMessageToPrint );
+        fflush( stdout );
 
         /* Loop back to wait for the next message. */
     }
 }
-/*-----------------------------------------------------------*/
+
 static void prvPrintTask( void *pvParameters )
 {
     int iIndexToString;
@@ -92,22 +50,49 @@ static void prvPrintTask( void *pvParameters )
         does not care what value is returned. In a more secure application
         a version of rand() that is known to be reentrant should be used -
         or calls to rand() should be protected using a critical section. */
-        // vTaskDelay( ( rand() % xMaxBlockTimeTicks ) );
-         vTaskDelay( xMaxBlockTimeTicks  );
+        vTaskDelay( ( rand() % xMaxBlockTimeTicks ) );
     }
 }
-/*-----------------------------------------------------------*/
 
-void main(void)
+void vApplicationTickHook( void )
 {
+    static int iCount = 0;
+    /* Print out a message every 200 ticks. The message is not written out
+    directly, but sent to the gatekeeper task. */
+    iCount++;
+    if( iCount >= 200 )
+    {
+        /* As xQueueSendToFrontFromISR() is being called from the tick hook, it
+        is not necessary to use the xHigherPriorityTaskWoken parameter (the
+        third parameter), and the parameter is set to NULL. */
+        xQueueSendToFrontFromISR( xPrintQueue,
+        &( pcStringsToPrint[ 2 ] ),
+        NULL );
+        /* Reset the count ready to print out the string again in 200 ticks
+        time. */
+        iCount = 0;
+    }
+}
 
-    uart_init();
-    uart_puts("\r\n****************************\r\n");
-    uart_puts("\r\n    FreeRTOS UART Sample\r\n");
-    uart_puts("\r\n  (This sample uses UART2)\r\n");
-    uart_puts("\r\n****************************\r\n");
+/* Define the strings that the tasks and interrupt will print out via the
+gatekeeper. */
+static char *pcStringsToPrint[] =
+{
+    "Task 1 ****************************************************\r\n",
+    "Task 2 ----------------------------------------------------\r\n",
+    "Message printed from the tick hook interrupt ##############\r\n"
+};
+/*-----------------------------------------------------------*/
+/* Declare a variable of type QueueHandle_t. The queue is used to send messages
+from the print tasks and the tick interrupt to the gatekeeper task. */
+QueueHandle_t xPrintQueue;
+/*-----------------------------------------------------------*/
+int main( void )
+{
+    /* Before a queue is used it must be explicitly created. The queue is
+    created to hold a maximum of 5 character pointers. */
 
-  xPrintQueue = xQueueCreate( 5, sizeof( char * ) );
+    xPrintQueue = xQueueCreate( 5, sizeof( char * ) );
     /* Check the queue was created successfully. */
 
     if( xPrintQueue != NULL )
@@ -132,41 +117,4 @@ void main(void)
     be created. Chapter 3 provides more information on heap memory
     management. */
     for( ;; );
-}
-
-
-
-/*-----------------------------------------------------------*/
-
-void vApplicationIdleHook( void )
-{
-}
-
-/*-----------------------------------------------------------*/
-
-void vApplicationTickHook( void )
-{
-    /*
-    Tick hook functions execute within the context of the tick interrupt, 
-    and so must be kept very short, must use only a moderate amount of stack space, 
-    and must not call any FreeRTOS API functions that do not end with 'FromISR()'.
-    */
-
-    static int iCount = 0;
-    /* Print out a message every 200 ticks. The message is not written out
-    directly, but sent to the gatekeeper task. */
-
-    iCount++;
-    if( iCount >= 200 )
-    {
-        /* As xQueueSendToFrontFromISR() is being called from the tick hook, it
-        is not necessary to use the xHigherPriorityTaskWoken parameter (the
-        third parameter), and the parameter is set to NULL. */
-        xQueueSendToFrontFromISR(   xPrintQueue,
-                                    &( pcStringsToPrint[ 2 ] ),
-                                    NULL );
-        /* Reset the count ready to print out the string again in 200 ticks
-        time. */
-        iCount = 0;
-    }
 }

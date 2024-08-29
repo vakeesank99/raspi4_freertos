@@ -39,7 +39,7 @@
 // #define configUSE_TICKLESS_IDLE                 1                                    // tick interrupt being turned off completely for extended periods
                                                                                         // specifically for use in applications that must minimize their power consumption
 #define configUSE_IDLE_HOOK						1
-#define configUSE_TICK_HOOK						1
+#define configUSE_TICK_HOOK						1                           //a function that is called by the kernel during each tick interrupt
 
 /*tick rate
 compile-time configuration constant sets
@@ -163,8 +163,8 @@ if you find yourself needing this function
 newlib and picolibc. These pre-built C Runtime Thread Local Storage 
 implementations can be enabled by by defining the respective macro
 */
-#define configUSE_NEWLIB_REENTRANT              1           //newlib
-#define configUSE_PICOLIBC_TLS                  1           //picolib
+// #define configUSE_NEWLIB_REENTRANT              1           //newlib
+// #define configUSE_PICOLIBC_TLS                  1           //picolib
 
 /*-----------Custom C Runtime Thread Local Storage---------------------*/
 #define configUSE_C_RUNTIME_TLS_SUPPORT         1   //enable C Runtime Thread Local Storage support
