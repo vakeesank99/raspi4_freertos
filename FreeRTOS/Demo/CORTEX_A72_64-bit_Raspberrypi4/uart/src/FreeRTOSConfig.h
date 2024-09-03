@@ -181,7 +181,12 @@ in the task control block
 */
 #define configNUM_THREAD_LOCAL_STORAGE_POINTERS         8  // non zero number to enable
 
-
+/*------------------Affinity-----------------------------------------*/
+/*The field uxCoreAffinityMask is only available if both
+configUSE_CORE_AFFINITY is set to 1 and configNUMBER_OF_CORES
+ is set to greater than 1 */
+#define configUSE_CORE_AFFINITY                         1
+#define configNUMBER_OF_CORES                           2
 
 
 

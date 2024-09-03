@@ -1,5 +1,3 @@
-
-
 #include <stddef.h>
 #include <stdint.h>
 // #include <stdlib.h>
@@ -21,11 +19,11 @@
 /* Define the strings that the tasks and interrupt will print out via the
 gatekeeper. */
 static char *pcStringsToPrint[] =
-{
-"Task 1 ****************************************************\r\n",
-"Task 2 ----------------------------------------------------\r\n",
-"Message printed from the tick hook interrupt ##############\r\n"
-};
+                                {
+                                    "Task 1 ****************************************************\r\n",
+                                    "Task 2 ----------------------------------------------------\r\n",
+                                    "Message printed from the tick hook interrupt ##############\r\n"
+                                                                                                        };
 /*-----------------------------------------------------------*/
 /* Declare a variable of type QueueHandle_t. The queue is used to send messages
 from the print tasks and the tick interrupt to the gatekeeper task. */
